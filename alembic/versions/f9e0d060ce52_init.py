@@ -1,8 +1,8 @@
 """init
 
-Revision ID: 2e59234b1db0
+Revision ID: f9e0d060ce52
 Revises: 
-Create Date: 2025-11-27 15:28:55.664913
+Create Date: 2025-11-28 15:09:55.109533
 
 """
 from typing import Sequence, Union
@@ -14,7 +14,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2e59234b1db0'
+revision: str = 'f9e0d060ce52'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -42,13 +42,13 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('description', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
-    sa.Column('owner_id', sa.Integer(), nullable=True),
+    sa.Column('owner_id', sa.Uuid(), nullable=True),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('projectuserlink',
     sa.Column('project_id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sa.Uuid(), nullable=False),
     sa.ForeignKeyConstraint(['project_id'], ['project.id'], ),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('project_id', 'user_id')
@@ -60,7 +60,7 @@ def upgrade() -> None:
     sa.Column('status', sa.Enum('TODO', 'IN_PROGRESS', 'DONE', name='statustask'), nullable=False),
     sa.Column('urgency', sa.Enum('LOW', 'MEDIUM', 'HIGH', name='urgencytask'), nullable=False),
     sa.Column('project_id', sa.Integer(), nullable=True),
-    sa.Column('assigned_to_id', sa.Integer(), nullable=True),
+    sa.Column('assigned_to_id', sa.Uuid(), nullable=True),
     sa.ForeignKeyConstraint(['assigned_to_id'], ['user.id'], ),
     sa.ForeignKeyConstraint(['project_id'], ['project.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')

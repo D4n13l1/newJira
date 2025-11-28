@@ -83,7 +83,7 @@ class Project(SQLModel, table=True):
     # Dono (criado por)
     owner: Optional[User] = Relationship(back_populates="created_projects")
 
-    # Participantes (many-to-many)
+    # Participantes (n-to-n)
     participants: List[User] = Relationship(back_populates="participating_projects", link_model=ProjectUserLink)
     
     #tasks 

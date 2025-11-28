@@ -1,7 +1,9 @@
 from sqlmodel import SQLModel, Field, create_engine, Session, Column, Integer, String
 from typing import Optional
+import dotenv, os
 
-DATABASE_URL = "sqlite:///./test.db"
+dotenv.load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL") or os.environ["DATABASE_URL"]
 engine = create_engine(DATABASE_URL)
 SQLModel.metadata.create_all(engine)
 

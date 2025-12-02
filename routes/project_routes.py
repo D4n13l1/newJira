@@ -86,7 +86,7 @@ async def get_project(project_id: int, session: Session = Depends(get_session), 
     raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="You do not have permission to access this project")
         
 
-@project_router.get("/", response_model=List[ProjectRead])
+@project_router.get("/", response_model=List[ProjectRead]) 
 async def get_all_projects(session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     if current_user.role == Role.ADMIN:
         statement = select(Project)
@@ -108,10 +108,12 @@ async def get_all_projects(session: Session = Depends(get_session), current_user
     return projects
 
 @project_router.delete("/{project_id}", response_model=dict)
-async def delete_project(project_id: int, session: Session = Depends(get_session)):
+async def delete_project(project_id: int, session: Session = Depends(get_session), current_user: User = Depends(get_current_user)):
     db_project = session.get(Project, project_id)
     if not db_project:
         raise HTTPException(status_code=404, detail="Project not found")
+    if db_project.owner_id != current_user.id and current_user.role != Role.ADMIN:
+        raise HTTPException(status_code=403, detail="You do not have permission to delete this project")
     session.delete(db_project)
     session.commit()
     return {"detail": "Project deleted successfully"}

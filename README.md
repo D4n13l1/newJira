@@ -41,13 +41,7 @@ copy .env.example .env
 notepad .env
 ```
 
-- Configure `DATABASE_URL` no `.env`. Exemplos:
-  - PostgreSQL sem schema customizado:
-
-```text
-DATABASE_URL=postgresql://postgres:senha@localhost:5432/newjira
-```
-
+- Configure `DATABASE_URL` no `.env`. 
 - PostgreSQL
 
 ```text
@@ -103,3 +97,30 @@ uvicorn main:app --reload
 ```
 
 A API ficará disponível em `http://127.0.0.1:8000`. A documentação interativa está em `http://127.0.0.1:8000/docs`.
+
+**Inicializar o Alembic (quando necessário)**
+
+Se o seu repositório ainda não tem a pasta `alembic/` (migrations), você pode inicializar o Alembic localmente e gerar as primeiras migrations:
+
+```powershell
+& .\.venv\Scripts\Activate.ps1
+# inicializa a estrutura (cria pasta alembic/ e alembic.ini)
+alembic init alembic
+
+# editar alembic.ini para apontar para sua DATABASE_URL ou usar variáveis de ambiente
+# e ajustar alembic/env.py para que `target_metadata` aponte para `SQLModel.metadata` do seu projeto
+
+# gerar uma migration inicial (autogenerate usa target_metadata para comparar modelos)
+alembic revision --autogenerate -m "init"
+
+# aplicar migrations no banco
+alembic upgrade head
+```
+
+Boas práticas com Alembic
+
+- Sempre revise o arquivo de migration gerado em `alembic/versions/*.py` antes de aplicar (`alembic upgrade head`). Autogenerate pode inferir tipos incorretos (ex.: INTEGER vs UUID).
+- Mantenha a pasta `alembic/` e os arquivos dentro de `alembic/versions/` versionados no Git — as migrations devem ser parte do histórico do código.
+- Não ignore `alembic/` no Git: remover/ignorar as migrations impede que outros desenvolvedores apliquem as mesmas alterações e quebra o histórico do schema.
+- É aceitável ignorar `alembic.ini` se ele contiver valores locais sensíveis, mas prefira mantê-lo com placeholders e controlar a URL do DB via `.env`.
+

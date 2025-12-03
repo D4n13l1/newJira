@@ -1,7 +1,21 @@
+# Environment
 .env
-alembic.ini
+
+# Virtualenv
+.venv/
+
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Tests
+.pytest_cache/
+
+# Local DB for quick tests
 test.db
-__pycache__
-.venv
-alembic/__pycache__
+
+# Alembic caches
+alembic/__pycache__/
+alembic/versions/__pycache__/
+alembic/versions/
 
